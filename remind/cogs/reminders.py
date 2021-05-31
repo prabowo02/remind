@@ -324,7 +324,7 @@ class Reminders(commands.Cog):
     def _serialize_guild_map(self):
         out_path = Path(constants.GUILD_SETTINGS_MAP_PATH)
         with out_path.open(mode='wb') as out_file:
-            pickle.dump(list(self.guild_map.values()), out_file)
+            pickle.dump(list(self.guild_map.items()), out_file)
 
     def _backup_serialize_guild_map(self):
         current_time_stamp = int(dt.datetime.utcnow().timestamp())
@@ -337,7 +337,7 @@ class Reminders(commands.Cog):
             "_" +
             str(current_time_stamp))
         with out_path.open(mode='wb') as out_file:
-            pickle.dump(list(self.guild_map.values()), out_file)
+            pickle.dump(list(self.guild_map.items()), out_file)
 
     @commands.group(brief='Commands for contest reminders',
                     invoke_without_command=True)
