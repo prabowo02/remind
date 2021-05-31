@@ -507,7 +507,7 @@ class Reminders(commands.Cog):
             desc += f'({_PYTZ_TIMEZONES_GIST_URL})'
             raise RemindersCogError(desc)
         for guild_settings in self.guild_map[ctx.guild.id].values():
-            self.guild_map[ctx.guild.id].localtimezone = pytz.timezone(timezone)
+            guild_settings.localtimezone = pytz.timezone(timezone)
         await ctx.send(embed=discord_common.embed_success(
             f'Succesfully set the server timezone to {timezone}'))
 
