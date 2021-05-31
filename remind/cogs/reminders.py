@@ -147,6 +147,8 @@ def get_default_guild_settings():
     allowed_patterns = copy.deepcopy(_WEBSITE_ALLOWED_PATTERNS)
     disallowed_patterns = copy.deepcopy(_WEBSITE_DISALLOWED_PATTERNS)
     settings = GuildSettings()
+    #  Empty settings
+    return settings
     settings.website_allowed_patterns = allowed_patterns
     settings.website_disallowed_patterns = disallowed_patterns
     return settings
@@ -322,7 +324,7 @@ class Reminders(commands.Cog):
     def _serialize_guild_map(self):
         out_path = Path(constants.GUILD_SETTINGS_MAP_PATH)
         with out_path.open(mode='wb') as out_file:
-            pickle.dump(self.guild_map, out_file)
+            pickle.dump(list(self.guild_map.values()), out_file)
 
     def _backup_serialize_guild_map(self):
         current_time_stamp = int(dt.datetime.utcnow().timestamp())
@@ -335,7 +337,7 @@ class Reminders(commands.Cog):
             "_" +
             str(current_time_stamp))
         with out_path.open(mode='wb') as out_file:
-            pickle.dump(self.guild_map, out_file)
+            pickle.dump(list(self.guild_map.values()), out_file)
 
     @commands.group(brief='Commands for contest reminders',
                     invoke_without_command=True)
@@ -461,7 +463,7 @@ class Reminders(commands.Cog):
 
     @remind.command(brief='Stop contest reminders from websites.')
     @commands.has_any_role('Admin', constants.REMIND_MODERATOR_ROLE)
-    async def unsubscribe(self, ctx, *websites: str):
+    async def unsubscribe(self, ctx, setting_name, *websites: str):
         """Stop contest reminders from websites."""
 
         if all(website not in _SUPPORTED_WEBSITES for website in websites):
@@ -472,7 +474,7 @@ class Reminders(commands.Cog):
         else:
             guild_id = ctx.guild.id
             unsubscribed, unsupported = self._set_guild_setting(
-                guild_id, websites,
+                guild_id, setting_name, websites,
                 defaultdict(list), defaultdict(lambda: ['']))
             unsubscribed_websites_str = ", ".join(unsubscribed)
             unsupported_websites_str = ", ".join(unsupported)
