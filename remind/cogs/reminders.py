@@ -144,11 +144,11 @@ GuildSettings = recordtype(
 
 
 def get_default_guild_settings():
-    allowed_patterns = copy.deepcopy(_WEBSITE_ALLOWED_PATTERNS)
-    disallowed_patterns = copy.deepcopy(_WEBSITE_DISALLOWED_PATTERNS)
+    # allowed_patterns = copy.deepcopy(_WEBSITE_ALLOWED_PATTERNS)
+    # disallowed_patterns = copy.deepcopy(_WEBSITE_DISALLOWED_PATTERNS)
+    allowed_patterns = defaultdict(list)
+    disallowed_patterns = defaultdict(list)
     settings = GuildSettings()
-    #  Empty settings
-    return settings
     settings.website_allowed_patterns = allowed_patterns
     settings.website_disallowed_patterns = disallowed_patterns
     return settings
@@ -179,15 +179,15 @@ class Reminders(commands.Cog):
         try:
             with guild_map_path.open('rb') as guild_map_file:
                 guild_map = pickle.load(guild_map_file)
-                for guild_id, guild_settings in guild_map.items():
+                for guild_id, guild_settings in guild_map:
                     for setting_name, settings in guild_settings.items():
                         self.guild_map[guild_id][setting_name] = \
                             GuildSettings(**{key: value
                                             for key, value
                                             in settings._asdict().items()
                                             if key in GuildSettings._fields})
-        except BaseException:
-            pass
+        except BaseException as ex:
+            self.logger.error(ex)
         asyncio.create_task(self._update_task())
 
     async def cog_after_invoke(self, ctx):
@@ -246,13 +246,13 @@ class Reminders(commands.Cog):
                 _WEBSITE_DISALLOWED_PATTERNS)]
 
     def get_guild_contests(self, contests, guild_id):
-        contests = []
+        guild_contests = []
         for settings in self.guild_map[guild_id].values():
             _, _, _, _, website_allowed_patterns, website_disallowed_patterns = \
                 settings
-            contests.extend([contest for contest in contests if contest.is_desired(
+            guild_contests.extend([contest for contest in contests if contest.is_desired(
                 website_allowed_patterns, website_disallowed_patterns)])
-        return contests
+        return guild_contests
 
     def _reschedule_all_tasks(self):
         for guild in self.bot.guilds:
