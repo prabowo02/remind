@@ -252,6 +252,7 @@ class Reminders(commands.Cog):
                 settings
             guild_contests.extend([contest for contest in contests if contest.is_desired(
                 website_allowed_patterns, website_disallowed_patterns)])
+        guild_contests.sort(key=lambda contest: contest.start_time)
         return guild_contests
 
     def _reschedule_all_tasks(self):
