@@ -245,9 +245,11 @@ class Reminders(commands.Cog):
                 _WEBSITE_ALLOWED_PATTERNS,
                 _WEBSITE_DISALLOWED_PATTERNS)]
 
-    def get_guild_contests(self, contests, guild_id):
+    def get_guild_contests(self, contests, guild_id, setting_name=None):
         guild_contests = []
-        for settings in self.guild_map[guild_id].values():
+        for name, settings in self.guild_map[guild_id].items():
+            if setting_name is not None and setting_name != name:
+                continue
             _, _, _, _, website_allowed_patterns, website_disallowed_patterns = \
                 settings
             guild_contests.extend([contest for contest in contests if contest.is_desired(
@@ -266,7 +268,7 @@ class Reminders(commands.Cog):
         self.logger.info(f'Tasks for guild {guild_id} cleared')
         if not self.start_time_map:
             return
-        for settings in self.guild_map[guild_id].values():
+        for setting_name, settings in self.guild_map[guild_id].items():
             if any(setting is None for setting in settings):
                 return
             channel_id, role_id, before, localtimezone, \
@@ -275,7 +277,7 @@ class Reminders(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             channel, role = guild.get_channel(channel_id), guild.get_role(role_id)
             for start_time, contests in self.start_time_map.items():
-                contests = self.get_guild_contests(contests, guild_id)
+                contests = self.get_guild_contests(contests, guild_id, setting_name)
                 if not contests:
                     continue
                 for before_mins in before:
