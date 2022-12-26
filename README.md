@@ -59,3 +59,19 @@ Their bot used to remind about Codeforces contests and we enhanced it for all ot
 ## License
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/aryanc403/remind/blob/master/LICENSE)
 
+## Usages
+
+1. Create a setting. A setting can subscribe to multiple URLs.
+```
+t;remind subscribe <setting_name> <url>
+```
+
+2. Create a reminder on a channel by pinging a role.
+```
+t;remind here <setting_name> <@role_name> <minutes_before>
+```
+
+3. Check your reminder settings.
+```
+t;remind settings <setting_name>
+```
