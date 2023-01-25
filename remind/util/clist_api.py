@@ -30,10 +30,10 @@ class ClientError(ClistApiError):
 
 def _query_api():
     clist_token = os.getenv('CLIST_API_TOKEN')
-    contests_start_time = dt.datetime.utcnow() - dt.timedelta(days=2)
+    contests_start_time = dt.datetime.utcnow() - dt.timedelta(days=20)
     contests_start_time_string = contests_start_time.strftime(
         "%Y-%m-%dT%H%%3A%M%%3A%S")
-    url = URL_BASE + '?limit=200&start__gte=' + \
+    url = URL_BASE + '?limit=1000&start__gte=' + \
         contests_start_time_string + '&' + clist_token
 
     try:
