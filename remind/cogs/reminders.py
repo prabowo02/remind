@@ -273,7 +273,7 @@ class Reminders(commands.Cog):
             return
         for setting_name, settings in self.guild_map[guild_id].items():
             if any(setting is None for setting in settings):
-                return
+                continue
             channel_id, role_id, before, localtimezone, \
                 website_allowed_patterns, website_disallowed_patterns = settings
 
